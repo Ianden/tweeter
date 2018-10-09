@@ -20,6 +20,10 @@ const db = require("./lib/in-memory-db");
 //
 // Because it exports a function that expects the `db` as a parameter, we can
 // require it and pass the `db` parameter immediately:
+
+// question: is this an example of an IIFE?
+// if so, does a require statement (or )
+
 const DataHelpers = require("./lib/data-helpers.js")(db);
 
 // The `tweets-routes` module works similarly: we pass it the `DataHelpers` object

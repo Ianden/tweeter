@@ -3,6 +3,7 @@
  * https://css-tricks.com/international-box-sizing-awareness-day/
  * Do not modify these two selectors, please
  */
+
 html {
   box-sizing: border-box;
 }
@@ -25,10 +26,26 @@ body {
  * Additional CSS can be defined below or in other CSS files, as per instructions
  */
 
- main {
-	width: 450px;
-	margin: 0 auto;
-	background-color: white;
-	display: block;
+.container {
+	
+	/* main container for page (excluding nav). centers the rest of the page using flex */
 
+	margin-top: 80px;
+
+	padding: 50px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.container main {
+
+	/* white box. holds boxes for tweets and the form for craeting a new tweet */
+
+	width: 450px;
+	padding: 50px 25px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
 }

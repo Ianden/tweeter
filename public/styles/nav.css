@@ -1,16 +1,13 @@
 #nav-bar {
-	position: sticky;
-	height: 80px;
+	top: 0;
+	display: flex;
+	align-items: center;
+	position: fixed;
 	width: 100%;
+	height: 80px;
 	padding: 0 2em;
 	background-color: #00a087;
-}
-
-#nav-bar .header {
-	color: #e8fdff;
-	position: absolute;
-  margin: 20px 10px; 
-	font-size: 30px;
+	z-index: 999;
 }
 
 #nav-bar .logo {
@@ -18,4 +15,26 @@
 	height: 80px;
 }
 
+#nav-bar .header {
+	margin-left: 10px;
+	color: #e8fdff;
+	font-size: 30px;
+}
 
+#nav-bar #compose {
+	margin-left: auto;
+	border: 1px solid black;
+	border-radius: 5px;
+	background: #bae2dc;
+	width: 100px;
+	height: 50px;
+	padding: 4px;
+	color: #00a087;
+	font-size: 16px;
+}
+
+#nav-bar #compose:hover {
+	color: black;
+	background: white;
+	border: 1px solid black;
+}

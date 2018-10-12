@@ -1,24 +1,45 @@
 $( document ).ready( () => {
 
   function sanitizeHTML (str) {
-    var temp = document.createElement('div');
+    let temp = document.createElement('div');
     temp.textContent = str;
     return temp.innerHTML;
   };
 
-	function createTweetElement(tweet) {
-		let name = tweet.user['name'];  
-		let avatar = tweet.user.avatars.small;
-		let handle = tweet.user.handle;
-		
-    let content = tweet['content']['text'];
-    let safe = sanitizeHTML(content);
+  function createTweetElement(tweet) {
+  	const name = tweet.user['name'];
+    const handle = tweet.user.handle;  
+  	const avatar = tweet.user.avatars.small;
+  		
+    const content = tweet['content']['text'];
+    const safe = sanitizeHTML(content);
 
-		let created = tweet.created_at;
+  	const created = tweet.created_at;
+      
+    const currentSeconds = Date.now() / 1000;
+    const createdSeconds = Math.floor(created / 1000);
+    
+    const seconds = currentSeconds - createdSeconds;
 
-		let $tweet = this.$fixture = $([
-			`<article class="tweet">`,
-	    	`<header>`,
+    let timestamp;
+
+    if (seconds > 2 * 24 * 3600) {
+      timestamp = `${Math.floor(seconds / (24 * 3600))} days ago.`;
+    } else if (seconds > 24 * 3600) {
+      timestamp = `Yesterday,`;;
+    } else if (seconds > 2 * 3600) {
+      timestamp = `${Math.floor(seconds / 3600)} hours ago.`;
+    } else if (seconds > 3600) {
+      timestamp = `An hour ago.`;
+    } else if (seconds > 2 * 60) {
+      timestamp = `${Math.floor(seconds / 60)} minutes ago.`;
+    } else {
+      timestamp = `Just now.`;
+    }
+
+  	const $tweet = $([
+  		`<article class="tweet">`,
+      	`<header>`,
        		`<img src=${avatar}>`,
          	`<span class="author">${name}</span>`,
          	`<span class="author-handle">${handle}</span>`,
@@ -27,7 +48,7 @@ $( document ).ready( () => {
         	`<span class="tweet-text">${safe}</span>`,
         `</div>`,
         `<footer>`,
-          `<span class="footer-text">${created}</span>`,
+          `<span class="footer-text">${timestamp}</span>`,
           `<div class="footer-icons-container">`,
             `<img src="images/flag.svg">`,
             `<img src="images/repeat.svg">`,
@@ -35,24 +56,23 @@ $( document ).ready( () => {
           `</div>`,
         `</footer>`,
       `</article>`
-		].join("\n"));
+  	].join("\n"));
 
- 		return $tweet;
-	}
+  	return $tweet;
+  }
 
-	function renderTweets(tweets) {
+  function renderTweets(tweets) {
     $('main .tweet-list').empty();
-		for (let tweet of tweets) {
-			$('main .tweet-list').prepend(createTweetElement(tweet));
-		}
-	}
+  	for (let tweet of tweets) {
+  		$('main .tweet-list').prepend(createTweetElement(tweet));
+  	}
+  }
 
   function loadTweets() {
-    $.getJSON( "/tweets", function( data ) {
-      console.log(data);
+    $.getJSON( "/tweets", data => {
       renderTweets(data);
     });
-    return 'success';
+    return;
   }
 
   $("#new-tweet-form").submit(function(e) {
@@ -61,30 +81,33 @@ $( document ).ready( () => {
 
     let form = $(this);
     let url = form.attr('action');
+    console.log(url);
     let tweet = $('#new-tweet-form textarea').val();
 
-    if (tweet.replace(/\s/g, '').length && tweet.length <= 140) {
+    if (!(tweet.replace(/\s/g, '').length)) {
+      $('.error-container').slideDown( "fast" );
+      $('.error-container').text("Tweet cannot be empty.");
+    } else if (!(tweet.length <= 140)) {
+      $('.error-container').slideDown( "fast" );
+      $('.error-container').text("Limitations inspire creativity.");
+    } else {
       $.ajax({
-         type: "POST",
-         url: url,
-         data: form.serialize(),
-         success: function(data) {
-            $('.error-container').slideUp( "fast" );
-            console.log('success');
-            loadTweets();
-         }
+       type: "POST",
+       url: url,
+       data: form.serialize(),
+       success: function(data) {
+          $('.error-container').slideUp( "fast" );
+          loadTweets();
+        }
      });
-  } else {
-    $('.error-container').slideDown( "fast" );
-    $('.error-container').text("String is either too long or too empty");
-  }
-});
+    }
+  });
 
   $( "#compose" ).click(function() {
     $( '.new-tweet' ).slideToggle( "fast" );
     $( '.new-tweet textarea' ).focus();
   });
 
-loadTweets();
+  loadTweets();
 
 });

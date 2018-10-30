@@ -1,11 +1,13 @@
 $( document ).ready( () => {
 
+  // make sure the user can't enter in some naughty code and make bad things happen
   function sanitizeHTML (str) {
     let temp = document.createElement('div');
     temp.textContent = str;
     return temp.innerHTML;
   };
 
+  // initialize a new tweet
   function createTweetElement(tweet) {
   	const name = tweet.user['name'];
     const handle = tweet.user.handle;  
@@ -13,7 +15,8 @@ $( document ).ready( () => {
   		
     const content = tweet['content']['text'];
     const safe = sanitizeHTML(content);
-
+  
+    // my attempt at making the timestamps nicer
   	const created = tweet.created_at;
       
     const currentSeconds = Date.now() / 1000;
@@ -62,12 +65,14 @@ $( document ).ready( () => {
   }
 
   function renderTweets(tweets) {
+    // empty container
     $('main .tweet-list').empty();
   	for (let tweet of tweets) {
   		$('main .tweet-list').prepend(createTweetElement(tweet));
   	}
   }
 
+  // get all tweets
   function loadTweets() {
     $.getJSON( "/tweets", data => {
       renderTweets(data);
@@ -84,6 +89,7 @@ $( document ).ready( () => {
     console.log(url);
     let tweet = $('#new-tweet-form textarea').val();
 
+    // client-side error handling for invalid tweets
     if (!(tweet.replace(/\s/g, '').length)) {
       $('.error-container').slideDown( "fast" );
       $('.error-container').text("Tweet cannot be empty.");
